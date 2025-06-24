@@ -88,8 +88,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = T5Tokenizer.from_pretrained("t5-base")
 model = T5ForConditionalGeneration.from_pretrained("t5-base").to(device) # fix the error here
 
-train_data = load_qa_data("train.json")
-test_data = load_qa_data("test.json")
+train_data = load_qa_data("data/train.json")
+test_data = load_qa_data("data/dev.json")
 
 train_dataset = QADataset(train_data, tokenizer)
 test_dataset = QADataset(test_data, tokenizer)
@@ -116,13 +116,14 @@ for epoch in range(num_epochs):
         optimizer.step()
         optimizer.zero_grad()
         total_loss += loss.item()
+        # print(f"Loss: {total_loss / len(train_loader):.4f}")
 
     print(f"Epoch {epoch+1}/{num_epochs} | Loss: {total_loss / len(train_loader):.4f}")
 
 
 # model evaluation
 model.eval()
-test_data = load_qa_data("data/test.json")  # 每个样本含 question, context, answer
+test_data = load_qa_data("data/dev.json")  # 每个样本含 question, context, answer
 
 predictions = []
 references = []
