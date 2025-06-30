@@ -125,8 +125,3 @@ tokenizer.save_pretrained(save_directory)
 # Epoch 2/3 | Loss: 0.0333
 # Epoch 3/3 | Loss: 0.0291
 
-# BLEU Scores:
-# BLEU-1: 0.0659
-# BLEU-2: 0.0297
-# BLEU-3: 0.0201
-# BLEU-4: 0.0155
