@@ -23,36 +23,6 @@ def load_qa_data(json_path):
     return data
 
 
-def generate_answer(question, context, tokenizer, model, device="cuda", max_len=64):
-    input_text = f"question: {question} context: {context}"
-    inputs = tokenizer(input_text, return_tensors="pt", truncation=True, padding=True).to(device)
-    with torch.no_grad():
-        output_ids = model.generate(**inputs, max_length=max_len)
-    return tokenizer.decode(output_ids[0], skip_special_tokens=True)
-
-
-def evaluate_bleu(predictions, references):
-    bleu1, bleu2, bleu3, bleu4 = [], [], [], []
-    smooth = SmoothingFunction().method1
-
-    for pred, ref in zip(predictions, references):
-        # 分词（适配中英文）
-        ref_tokens = [nltk.word_tokenize(ref)]
-        pred_tokens = nltk.word_tokenize(pred)
-
-        bleu1.append(sentence_bleu(ref_tokens, pred_tokens, weights=(1, 0, 0, 0), smoothing_function=smooth))
-        bleu2.append(sentence_bleu(ref_tokens, pred_tokens, weights=(0.5, 0.5, 0, 0), smoothing_function=smooth))
-        bleu3.append(sentence_bleu(ref_tokens, pred_tokens, weights=(0.33, 0.33, 0.33, 0), smoothing_function=smooth))
-        bleu4.append(sentence_bleu(ref_tokens, pred_tokens, weights=(0.25, 0.25, 0.25, 0.25), smoothing_function=smooth))
-
-    return {
-        "BLEU-1": sum(bleu1) / len(bleu1),
-        "BLEU-2": sum(bleu2) / len(bleu2),
-        "BLEU-3": sum(bleu3) / len(bleu3),
-        "BLEU-4": sum(bleu4) / len(bleu4),
-    }
-
-
 # Preprocessing and create the dataset
 class QADataset(Dataset):
     def __init__(self, data, tokenizer, max_input_len=512, max_output_len=64):
