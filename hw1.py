@@ -126,7 +126,7 @@ for epoch in range(num_epochs):
         # avg_loss = total_loss / len(train_loader)
         train_losses.append(loss.detach().cpu())
 
-        # if i == 10:
+        # if i == 40:
         #     break
     print(f"Epoch {epoch+1}/{num_epochs} | Loss: {total_loss / len(train_loader):.4f}")
 
@@ -134,8 +134,8 @@ for epoch in range(num_epochs):
 loss function curve
 '''
 plt.figure(figsize=(8, 6))
-plt.plot(range(1, len(train_losses) + 1), train_losses, marker='o', label='Training Loss')
-plt.xlabel('Epoch')
+plt.plot(range(20, len(train_losses) + 1), train_losses[19:], marker='o', label='Training Loss')
+plt.xlabel('Iterations')
 plt.ylabel('Loss')
 plt.title('Training Loss Convergence Curve')
 plt.grid(True)
@@ -157,8 +157,6 @@ for i,item in enumerate(test_data):
     pred = generate_answer(item["question"], item["context"], tokenizer, model)
     predictions.append(pred)
     references.append(item["answer"])
-    # if i == 10:
-    #     break
 
 bleu_scores = evaluate_bleu(predictions, references)
 
@@ -166,7 +164,12 @@ print("BLEU Scores:")
 for k, v in bleu_scores.items():
     print(f"{k}: {v:.4f}")
 
-# Epoch 1/3 | Loss: 0.1215
-# Epoch 2/3 | Loss: 0.0330
-# Epoch 3/3 | Loss: 0.0286
+# Epoch 1/3 | Loss: 0.1239
+# Epoch 2/3 | Loss: 0.0333
+# Epoch 3/3 | Loss: 0.0291
 
+# BLEU Scores:
+# BLEU-1: 0.0659
+# BLEU-2: 0.0297
+# BLEU-3: 0.0201
+# BLEU-4: 0.0155
