@@ -29,8 +29,10 @@ def evaluate_bleu(predictions, references):
 
     for pred, ref in zip(predictions, references):
         # 分词（适配中英文）
-        ref_tokens = [nltk.word_tokenize(ref)]
-        pred_tokens = nltk.word_tokenize(pred)
+        pred_tokens = list(pred.strip())
+        ref_tokens = [list(r.strip()) for r in references]
+        # ref_tokens = [nltk.word_tokenize(ref)]
+        # pred_tokens = nltk.word_tokenize(pred)
 
         bleu1.append(sentence_bleu(ref_tokens, pred_tokens, weights=(1, 0, 0, 0), smoothing_function=smooth))
         bleu2.append(sentence_bleu(ref_tokens, pred_tokens, weights=(0.5, 0.5, 0, 0), smoothing_function=smooth))
@@ -56,19 +58,19 @@ model = model.to(device)
 model.eval()
 test_data = load_qa_data("data/dev.json")  # 每个样本含 question, context, answer
 
-# predictions = []
-# references = []
+predictions = []
+references = []
 
-# for i,item in enumerate(test_data):
-#     pred = generate_answer(item["question"], item["context"], tokenizer, model)
-#     predictions.append(pred)
-#     references.append(item["answer"])
+for i,item in enumerate(test_data):
+    pred = generate_answer(item["question"], item["context"], tokenizer, model)
+    predictions.append(pred)
+    references.append(item["answer"])
 
-# bleu_scores = evaluate_bleu(predictions, references)
+bleu_scores = evaluate_bleu(predictions, references)
 
-# print("BLEU Scores:")
-# for k, v in bleu_scores.items():
-#     print(f"{k}: {v:.4f}")
+print("BLEU Scores:")
+for k, v in bleu_scores.items():
+    print(f"{k}: {v:.4f}")
 
 '''
 Given context and question, provide the answer
@@ -88,7 +90,7 @@ answer = generate_answer(
 print("Answer:", answer)
 
 # BLEU Scores:
-# BLEU-1: 0.0701
-# BLEU-2: 0.0326
-# BLEU-3: 0.0227
-# BLEU-4: 0.0176
+# BLEU-1: 0.5655
+# BLEU-2: 0.5372
+# BLEU-3: 0.4242
+# BLEU-4: 0.3478
